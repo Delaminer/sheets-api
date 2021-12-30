@@ -1,22 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-const Bar = (props) => {
-    const [username, setUsername] = useState('');
+const Bar = props => {
     return (
-        <div className="menu-bar">
-            <div className="logo">SheetsAPI</div>
-            <input type="text" className="filename"
-                defaultValue={props.filename}
-                onBlur={e => props.changeName(e.target.value)}
+        <div className='menu-bar'>
+            <div className='logo'>SheetsAPI</div>
+            <input type='text' className='filename'
+                defaultValue={props.projectName}
+                onBlur={e => props.changeProjectName(e.target.value)}
             />
 
-            <div className="signin">
-                <span>Username: </span>
-                <input 
-                    type="text" placeholder="Enter username"
-                    onChange={e => setUsername(e.target.value)}
-                />
-                <button onClick={() => props.signin(username)}>Sign In</button>
+            <div className='account'>
+                <span>Signed in as {props.username}</span>
+                <button onClick={props.signout}>Sign Out</button>
             </div>
         </div>
     );

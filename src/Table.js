@@ -3,12 +3,12 @@ import React, { useState, useRef, useEffect } from 'react';
 // Simple helper function for getting a letter in the alphabet
 const letter = index => String.fromCharCode('A'.charCodeAt(0) + index);
 
-const Table = (props) => {
+const Table = props => {
 
     // Keep track of what cell is actively being edited
     const [activeCell, setActiveCell] = useState({ row: -1, column: -1 });
     // Keep a state for the table of values of what cell is actively being edited
-    const [a, setData] = useState(JSON.stringify(props.csvData));//() => props.csvData
+    const [a, setData] = useState(JSON.stringify(props.data));//() => props.csvData
     const data = JSON.parse(a);
     // Keep a reference to the data editor input field
     const textInput = useRef(null);
@@ -123,7 +123,7 @@ const Table = (props) => {
         }
     }
     return (
-        <div className='editor'>
+        <div className='table'>
             <div className='name-bar'>
                 <span>Value: </span>
                 <input type='text' ref={textInput} value={textInputValue}
