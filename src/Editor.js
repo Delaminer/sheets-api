@@ -44,6 +44,7 @@ const Editor = props => {
                     }
                 }}
                 signout={props.signout}
+                exitProject={props.exitProject}
             />
             {loaded ?
                 (<Table

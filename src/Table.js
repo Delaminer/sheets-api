@@ -36,6 +36,7 @@ const Table = props => {
     useEffect(() => {
         const events = {
             'Enter': () => { moveCell(1, 0); },
+            'Tab': () => { moveCell(0, 1); },
             'ArrowUp': () => { moveCell(-1, 0); },
             'ArrowDown': () => { moveCell(1, 0); },
             'ArrowLeft': () => { moveCell(0, -1); },

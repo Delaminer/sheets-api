@@ -91,6 +91,27 @@ app.post('/users/:username/projects', (req, res) => {
     res.status(201).send(JSON.stringify({ id: id, name: project.name }));
 });
 
+app.delete('/users/:username/projects/:projectID', (req, res) => {
+    const username = req.params.username;
+    const id = req.params.projectID;
+    // Make sure it exists
+    if (database.projects[id] &&
+        database.users[username] &&
+        database.users[username].projects.includes(parseInt(id))) {
+        // Remove from the player's list
+        database.users[username].projects.splice(database.users[username].projects.indexOf(id), 1);
+        // Delete the project
+        delete database.projects[id];
+        // Save the database
+        saveDatabase();
+
+        res.sendStatus(200);
+    }
+    else {
+        res.sendStatus(404);
+    }
+});
+
 // Update the information (data, name, etc) of a certain project
 app.put('/projects/:projectID', (req, res) => {
     const id = req.params.projectID;

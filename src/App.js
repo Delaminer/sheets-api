@@ -25,6 +25,8 @@ let projectName = 'Untitled Project';
 const App = () => {
     const [projectID, setProjectID] = useState('');
     const [username, setUsername] = useState('');
+    // For forcing a re-render
+    const [render, setRender] = useState(0);
 
     return (
         <div className='App'>
@@ -38,8 +40,21 @@ const App = () => {
                         url={url}
                         username={username}
                         setProjectID={setProjectID}
+                        // For forcing this to re-render (and re-fetch data)
+                        render={render}
                         deleteProject={targetProjectID => {
                             // Delete a project!?!?!
+                            fetch(`${url}/users/${username}/projects/${targetProjectID}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({}),
+                            })
+                                .then(res => {
+                                    // Update the list of projects by forcing a re-render
+                                    setRender(r => r + 1);
+                                })
                         }}
                         newProject={() => {
                             // Create a new project
@@ -56,6 +71,11 @@ const App = () => {
                                     setProjectID(data.id);
                                 });
                         }}
+                        signout={() => {
+                            // Sign out by clearing the username and projectID
+                            setUsername('');
+                            setProjectID('');
+                        }}
                     />
                 ) : (
                     <Editor
@@ -63,8 +83,13 @@ const App = () => {
                         projectID={projectID}
                         username={username}
                         signout={() => {
-                            // Sign out by clearing the username
+                            // Sign out by clearing the username and projectID
                             setUsername('');
+                            setProjectID('');
+                        }}
+                        exitProject={() => {
+                            // Exit the project by clearing the projectID
+                            setProjectID('');
                         }}
                     />
                 )

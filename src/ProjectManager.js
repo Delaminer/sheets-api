@@ -9,7 +9,7 @@ const ProjectManager = props => {
             .then(userData => {
                 setProjects(userData.projects);
             });
-    }, [props.url, props.username]);
+    }, [props.url, props.username, props.render]);
 
     return (
         <div className='project-manager'>
@@ -24,7 +24,7 @@ const ProjectManager = props => {
                 ))}
             </ul>
             <button onClick={props.newProject}>New Project</button>
-            <p>Signed in as {props.username}</p>
+            <p>Signed in as {props.username} <button onClick={props.signout}>Sign out</button></p>
         </div >
     )
 }

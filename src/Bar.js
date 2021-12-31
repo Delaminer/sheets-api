@@ -12,6 +12,7 @@ const Bar = props => {
             <div className='account'>
                 <span>Signed in as {props.username}</span>
                 <button onClick={props.signout}>Sign Out</button>
+                <button onClick={props.exitProject}>Back to Projects</button>
             </div>
         </div>
     );
