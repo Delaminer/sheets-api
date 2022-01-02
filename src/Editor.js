@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Table from './Table';
 import Bar from './Bar';
@@ -21,8 +21,43 @@ const Editor = props => {
             });
     }, [props.url, props.projectID, setProjectName, setData, setLoaded]);
 
+    const fileInput = useRef(null);
+
     return (
         <div>
+            {/* For file input: */}
+            <input
+                style={{ display: 'none' }}
+                ref={fileInput}
+                type='file'
+                onChange={e => {
+                    // Use the uploaded file
+                    const fileUploaded = e.target.files[0];
+                    // Get the text of the file using FileReader
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        let text = e.target.result;
+                        // Convert text to a data object
+                        let newData = text.split('\n').map(line => line.trim().split(','));
+                        // Convert from an array of arrays to an object of objects
+                        newData = { ...newData.map(line => ({ ...line })) };
+                        console.log(newData)
+                        setData(newData);
+                        fetch(`${props.url}/projects/${props.projectID}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ data: newData }),
+                        })
+                            .then(res => res.json())
+                            .then(resData => {
+                                console.log('Updated server with output ' + JSON.stringify(resData));
+                            });
+                    };
+                    reader.readAsText(fileUploaded);
+                }}
+            ></input>
             <Bar
                 projectName={projectName}
                 username={props.username}
@@ -45,10 +80,14 @@ const Editor = props => {
                 }}
                 signout={props.signout}
                 exitProject={props.exitProject}
+                uploadCSV={() => {
+                    // Click the file input to request an upload
+                    fileInput.current.click();
+                }}
             />
             {loaded ?
                 (<Table
-                    data={data}
+                    data={JSON.stringify(data)}
                     minColumns={14}
                     minRows={30}
                     changeData={(newData) => {

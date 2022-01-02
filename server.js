@@ -77,7 +77,7 @@ app.post('/users/:username/projects', (req, res) => {
         id: id,
         name: req.body.name || 'Untitled Project', // Default name
         owner: username,
-        data: {},
+        data: req.body.data || {}, // There is no data by default
     };
     // Register the project
     database.projects[id] = project;

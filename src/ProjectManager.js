@@ -24,6 +24,7 @@ const ProjectManager = props => {
                 ))}
             </ul>
             <button onClick={props.newProject}>New Project</button>
+            <button onClick={props.newCSVProject}>New Project from CSV file</button>
             <p>Signed in as {props.username} <button onClick={props.signout}>Sign out</button></p>
         </div >
     )

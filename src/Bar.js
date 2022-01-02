@@ -8,6 +8,7 @@ const Bar = props => {
                 defaultValue={props.projectName}
                 onBlur={e => props.changeProjectName(e.target.value)}
             />
+            <button onClick={props.uploadCSV}>Use CSV</button>
 
             <div className='account'>
                 <span>Signed in as {props.username}</span>

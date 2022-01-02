@@ -8,8 +8,8 @@ const Table = props => {
     // Keep track of what cell is actively being edited
     const [activeCell, setActiveCell] = useState({ row: -1, column: -1 });
     // Keep a state for the table of values of what cell is actively being edited
-    const [a, setData] = useState(JSON.stringify(props.data));//() => props.csvData
-    const data = JSON.parse(a);
+    //const [a, setData] = useState(JSON.stringify(props.data));//() => props.csvData
+    const data = JSON.parse(props.data);
     // Keep a reference to the data editor input field
     const textInput = useRef(null);
 
@@ -45,7 +45,7 @@ const Table = props => {
                 // Delete the data here if there is any
                 if (data[activeCell.row]) {
                     data[activeCell.row][activeCell.column] = '';
-                    setData(JSON.stringify(data));
+                    // setData(JSON.stringify(data));
                     // Notify the app of the change
                     props.changeData(data);
                 }
@@ -134,7 +134,7 @@ const Table = props => {
                             data[activeCell.row] = {};
                         }
                         data[activeCell.row][activeCell.column] = e.target.value;
-                        setData(JSON.stringify(data));
+                        //setData(JSON.stringify(data));
 
                         // Notify the app of the change
                         props.changeData(data);
