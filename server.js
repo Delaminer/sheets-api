@@ -153,7 +153,38 @@ app.get('/projects/:projectID', (req, res) => {
     const id = req.params.projectID;
     // Make sure it exists
     if (database.projects[id]) {
-        res.status(200).send(JSON.stringify(database.projects[id]));
+        // The user can provide requirements on which data should be returned
+        const requirements = Object.keys(req.query);
+        if (requirements.length === 0) {
+            // No special requests, send the whole file
+            res.status(200).send(JSON.stringify(database.projects[id]));
+        }
+        else {
+            // There are queries, so send only part of the database
+            const data = database.projects[id].data;
+            const field = requirements[0].toLowerCase();
+            const requiredValue = req.query[field];
+            const column = Object.keys(data[0]).find(index => data[0][index].toLowerCase() === field);
+            // Now go through the other rows, checking if that column contains the correct value
+            const validRows = Object.keys(data).filter(row => (
+                // Cannot be the first row
+                row !== 0 &&
+                // The data of this column must have the required value
+                data[row][column] === requiredValue
+            ))
+            // Create a valid data object for this item using the first row as labels
+            .map(row => {
+                const obj = {};
+                const columnsToUse = Object.keys(data[row]);
+                columnsToUse.forEach(col => {
+                    // Label each property properly
+                    const key = data[0][col] || col;
+                    obj[key] = data[row][col];
+                })
+                return obj;
+            });
+            res.status(200).send(JSON.stringify(validRows));
+        }
     }
     else {
         res.sendStatus(404);
