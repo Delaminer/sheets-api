@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 const fs = require('fs');
-const port = 5000;
+const port = 80;
 
 // Use this for CORS (so other sources can use the API)
 app.use(cors());
@@ -56,9 +56,9 @@ const getUser = username => {
     return database.users[username];
 }
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+// app.get('/', (req, res) => {
+//     res.send('Hello World!');
+// });
 
 // Create a new project POST request
 app.post('/users/:username/projects', (req, res) => {
@@ -172,17 +172,17 @@ app.get('/projects/:projectID', (req, res) => {
                 // The data of this column must have the required value
                 data[row][column].includes(requiredValue)
             ))
-            // Create a valid data object for this item using the first row as labels
-            .map(row => {
-                const obj = {};
-                const columnsToUse = Object.keys(data[row]);
-                columnsToUse.forEach(col => {
-                    // Label each property properly
-                    const key = data[0][col] || col;
-                    obj[key] = data[row][col];
-                })
-                return obj;
-            });
+                // Create a valid data object for this item using the first row as labels
+                .map(row => {
+                    const obj = {};
+                    const columnsToUse = Object.keys(data[row]);
+                    columnsToUse.forEach(col => {
+                        // Label each property properly
+                        const key = data[0][col] || col;
+                        obj[key] = data[row][col];
+                    })
+                    return obj;
+                });
             res.status(200).send(JSON.stringify(validRows));
         }
     }

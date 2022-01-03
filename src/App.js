@@ -5,7 +5,7 @@ import ProjectManager from './ProjectManager';
 import Editor from './Editor';
 import { Routes, Route, useMatch, useNavigate } from 'react-router-dom';
 
-const url = 'http://127.0.0.1:5000';
+const url = 'https://sheets-api-server.herokuapp.com/';
 
 const App = () => {
     const [username, setUsername] = useState(localStorage.getItem('username') || '');
