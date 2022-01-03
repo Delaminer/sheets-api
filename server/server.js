@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors')
 const app = express();
 const fs = require('fs');
-const port = 80;
+const path = require('path');
+// Use a port provided by Heroku or whatever this is hosted on
+const port = process.env.PORT || 3001;
 
 // Use this for CORS (so other sources can use the API)
 app.use(cors());
@@ -10,6 +12,10 @@ app.use(cors());
 // Use these for JSON input
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Allow files to be accessed for the frontend
+app.use(express.static(path.resolve(__dirname, '../client/build')));
+
 
 let database = {
     users: {},
@@ -61,7 +67,7 @@ const getUser = username => {
 // });
 
 // Create a new project POST request
-app.post('/users/:username/projects', (req, res) => {
+app.post('/api/users/:username/projects', (req, res) => {
     const username = req.params.username;
     // Create the user if needed
     let user = getUser(username);
@@ -91,7 +97,7 @@ app.post('/users/:username/projects', (req, res) => {
     res.status(201).send(JSON.stringify({ id: id, name: project.name }));
 });
 
-app.delete('/users/:username/projects/:projectID', (req, res) => {
+app.delete('/api/users/:username/projects/:projectID', (req, res) => {
     const username = req.params.username;
     const id = req.params.projectID;
     // Make sure it exists
@@ -113,7 +119,7 @@ app.delete('/users/:username/projects/:projectID', (req, res) => {
 });
 
 // Update the information (data, name, etc) of a certain project
-app.put('/projects/:projectID', (req, res) => {
+app.put('/api/projects/:projectID', (req, res) => {
     const id = req.params.projectID;
     // Make sure it exists
     if (database.projects[id]) {
@@ -133,7 +139,7 @@ app.put('/projects/:projectID', (req, res) => {
 });
 
 // Get the information about a user
-app.get('/users/:username', (req, res) => {
+app.get('/api/users/:username', (req, res) => {
     const username = req.params.username;
     // Make sure they exist
     if (database.users[username]) {
@@ -149,7 +155,7 @@ app.get('/users/:username', (req, res) => {
 });
 
 // Get the data of a certain project
-app.get('/projects/:projectID', (req, res) => {
+app.get('/api/projects/:projectID', (req, res) => {
     const id = req.params.projectID;
     // Make sure it exists
     if (database.projects[id]) {
@@ -192,7 +198,7 @@ app.get('/projects/:projectID', (req, res) => {
 });
 
 // Get the data of a certain project as a CSV
-app.get('/projects/download/:projectID', (req, res) => {
+app.get('/api/projects/download/:projectID', (req, res) => {
     const id = req.params.projectID;
     // Make sure it exists
     if (database.projects[id]) {
@@ -211,6 +217,10 @@ app.get('/projects/download/:projectID', (req, res) => {
     }
 });
 
+// Extra GET requests are treated as files
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+});
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
