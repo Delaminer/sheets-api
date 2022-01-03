@@ -9,6 +9,9 @@ const Bar = props => {
                 onBlur={e => props.changeProjectName(e.target.value)}
             />
             <button onClick={props.uploadCSV}>Use CSV</button>
+            <span className='save-status'>
+                {props.saving ? 'Saving...' : 'Saved'}
+            </span>
 
             <div className='account'>
                 <span>Signed in as {props.username}</span>

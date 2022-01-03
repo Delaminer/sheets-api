@@ -4,10 +4,15 @@ import Table from './Table';
 import Bar from './Bar';
 
 const Editor = props => {
+    // The name of the project being edited, in the input field at the top
     const [projectName, setProjectName] = useState('');
+    // The data displayed and edited in the editor
     const [data, setData] = useState({});
     // Status about loading data from the
     const [loaded, setLoaded] = useState(false);
+
+    // Status on autosave
+    const [scheduledSave, scheduleSave] = useState(null);
 
     // Get the project name and data from the API
     useEffect(() => {
@@ -27,7 +32,7 @@ const Editor = props => {
                 setData(project.data);
                 setLoaded(true);
             });
-    }, [props.url, props.projectID, setProjectName, setData, setLoaded]);
+    }, [props, setProjectName, setData, setLoaded]);
 
     const fileInput = useRef(null);
 
@@ -92,6 +97,7 @@ const Editor = props => {
                     // Click the file input to request an upload
                     fileInput.current.click();
                 }}
+                saving={!!scheduledSave} // Convert the scheduled save to a boolean (if it exists it is true)
             />
             {loaded ?
                 (<Table
@@ -101,17 +107,38 @@ const Editor = props => {
                     changeData={(newData) => {
                         console.log('Change in data');
                         setData(newData);
-                        fetch(`${props.url}/projects/${props.projectID}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ data: newData }),
-                        })
-                            .then(res => res.json())
-                            .then(resData => {
-                                console.log('Updated server with output ' + JSON.stringify(resData));
-                            });
+                        if (scheduledSave) {
+                            // Clear the old save
+                            clearTimeout(scheduledSave);
+                            scheduleSave(null);
+                        }
+                        
+                        // Request a save in data
+                        const autosaveID = setTimeout(() => {
+                            // Keep a record of this save
+                            const thisSave = scheduleSave;
+
+                            // Save!
+                            fetch(`${props.url}/projects/${props.projectID}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ data: newData }),
+                            })
+                                .then(res => res.json())
+                                .then(resData => {
+                                    console.log('Updated server with output ' + JSON.stringify(resData));
+                                    // Clear the save if there isn't another one in progress
+                                    if (thisSave === scheduleSave) {
+                                        clearTimeout(scheduledSave);
+                                        scheduleSave(null);
+                                    }
+                                });
+                        }, 3000);
+
+                        // Record the ID
+                        scheduleSave(autosaveID);
                     }}
                 />)
                 : (
