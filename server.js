@@ -170,7 +170,7 @@ app.get('/projects/:projectID', (req, res) => {
                 // Cannot be the first row
                 row !== 0 &&
                 // The data of this column must have the required value
-                data[row][column] === requiredValue
+                data[row][column].includes(requiredValue)
             ))
             // Create a valid data object for this item using the first row as labels
             .map(row => {

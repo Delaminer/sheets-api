@@ -11,10 +11,18 @@ const Editor = props => {
 
     // Get the project name and data from the API
     useEffect(() => {
+        // Cannot edit a project if you are not signed in!
+        if (props.username === '') {
+            props.exitProject();
+        }
         setLoaded(false);
         fetch(`${props.url}/projects/${props.projectID}`)
             .then(res => res.json())
             .then(project => {
+                // Cannot edit a project if you are not the owner!
+                if (props.username !== project.owner) {
+                    props.exitProject();
+                }
                 setProjectName(project.name);
                 setData(project.data);
                 setLoaded(true);

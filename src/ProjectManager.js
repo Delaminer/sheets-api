@@ -18,7 +18,7 @@ const ProjectManager = props => {
                 {projects.map(project => (
                     <li key={project.id}>
                         {project.name} ({project.id})
-                        <button onClick={() => props.setProjectID(project.id)}>Edit</button>
+                        <button onClick={() => props.editProject(project.id)}>Edit</button>
                         <button onClick={() => props.deleteProject(project.id)}>Delete</button>
                     </li>
                 ))}
